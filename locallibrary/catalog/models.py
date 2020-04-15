@@ -30,7 +30,7 @@ class Book(models.Model):
     BEST_SELLER_RANK_LIMIT = 50
 
     title = models.CharField(max_length=250)
-    slug = models.SlugField(null=True, blank=True)
+    slug = models.SlugField(null=True, blank=True, help_text='This field will auto fill with title after saving')
     author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True)
     rating = models.DecimalField(max_digits=2, decimal_places=1)
     chart_rank = models.IntegerField()

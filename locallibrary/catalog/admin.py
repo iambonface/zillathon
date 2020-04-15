@@ -19,6 +19,7 @@ class BookInstanceInline(admin.TabularInline):
 class BookAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'display_genre')
     inlines = [BookInstanceInline]
+    readonly_fields=('slug',)
 
 # admin.site.register(BookInstance)
 @admin.register(BookInstance)
