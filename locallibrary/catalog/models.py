@@ -2,6 +2,8 @@ from django.db import models
 import uuid #for unique book instances
 from django.urls import reverse #Generate detail URLS
 
+from django.template.defaultfilters import slugify
+
 # Create your models here.
 class Genre(models.Model):
     """ Create a genre model for selecting in the admin"""
@@ -28,6 +30,7 @@ class Book(models.Model):
     BEST_SELLER_RANK_LIMIT = 50
 
     title = models.CharField(max_length=250)
+    slug = models.SlugField(null=True, blank=True)
     author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True)
     rating = models.DecimalField(max_digits=2, decimal_places=1)
     chart_rank = models.IntegerField()
@@ -45,13 +48,22 @@ class Book(models.Model):
         """Check if the book is a best seller """
         if self.chart_rank > BEST_SELLER_RANK_LIMIT:
             return True
+    def display_genre(self):
+        return ','.join(genre.name for genre in self.genre.all()[:3])
+    display_genre.short_description = 'Genre'
+
 
     def get_absolute_url(self):
         """Return the detail book url"""
-        return reverse('book-detail', args=[str(self.id)])
+        return reverse('book-detail', args=[str(self.slug)])
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.title)
+        super(Book, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f'Title: {self.title}'
+        return self.title
 
 
 class BookInstance(models.Model):
@@ -97,7 +109,7 @@ class Author(models.Model):
 
     def __str__(self):
         """Return the String object for Author"""
-        return f'Author: {self.first_name}, {self.last_name}'
+        return f'{self.first_name} {self.last_name}'
 
 
 
