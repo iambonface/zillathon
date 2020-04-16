@@ -1,11 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    REGISTER
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h3>Sign Up Now</h3>
+<form method="POST" class="form-group">
+    {% csrf_token %}
+    {% for field in form %}
+        <p>
+            {{ field.label_tag }} <br>
+            {{ field }}
+            {% if field.help_text %}
+                <!-- <p>{{field.help_text}}</p> -->
+            {% endif %}
+            {% for error in field.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </p>
+
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Sign up</button>
+
+</form>
+
+{% endblock %}
